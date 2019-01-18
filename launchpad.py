@@ -37,7 +37,7 @@ notes = [0,1,2,3,4,5,16,32,48,49,50,51,64,80,96,112]
 
 #Pads on
 for pad in charMapping['F']:
-	output.send(mido.Message('note_on', note=i, velocity=15))
+	output.send(mido.Message('note_on', note=pad, velocity=15))
 
 time.sleep(2)
 
