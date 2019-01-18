@@ -17,7 +17,7 @@ for i in notes:
 	output.send(mido.Message('note_off', note=i))
 
 pad = 3
-pad2 = 5
+pad2 = 8
 incr = 1
 velocity = 15
 
