@@ -16,7 +16,7 @@ time.sleep(2)
 for i in notes:
 	output.send(mido.Message('note_off', note=i))
 
-pad = 0
+pad = 3
 pad2 = 5
 incr = 1
 velocity = 15
