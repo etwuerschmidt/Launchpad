@@ -228,22 +228,26 @@ class PyLaunch():
 
         self.lit_pads = []
 
-        self.letter_delay = 1
+        self.letter_delay = 0.5
         self.word_delay = self.letter_delay / 2
 
         self.midi_output = mido.open_output('Launchpad S 1')
 
-    def display(self, word):
+    def display(self, word, color=None):
+        if color != 'RANDOM':
+            self.set_pad_color(color)
         for letter in word.upper():
+            if color == 'RANDOM':
+                self.set_pad_color(color)
             if letter == ' ':
                 time.sleep(self.word_delay)
             else:
                 for pad in self.char_mapping[letter]:
                     self.midi_output.send(mido.Message('note_on', note=pad, velocity=self.current_color))
                     self.lit_pads.append(pad)
-                    time.sleep(self.letter_delay)
-                    self.clear_lit_pads()
-                    time.sleep(self.letter_delay)
+                time.sleep(self.letter_delay)
+                self.clear_lit_pads()
+                time.sleep(self.letter_delay)
 
     def clear_all_pads(self):
         for i in range(0, 120):
@@ -259,10 +263,11 @@ class PyLaunch():
         self.word_delay = new_delay / 2
 
     def set_pad_color(self, color):
-        if color.upper() == 'RANDOM':
-            self.current_color = self.color_map[random.choice(list(self.color_map.keys()))]
-        else:
-            self.current_color = self.color_map[color]
+        if color is not None:
+            if color.upper() == 'RANDOM':
+                self.current_color = self.color_map[random.choice(list(self.color_map.keys()))]
+            else:
+                self.current_color = self.color_map[color]
 
     def show_all_chars(self):
         for char in self.char_mapping.keys():
@@ -274,6 +279,8 @@ class PyLaunch():
 
 if __name__ == "__main__":
     MY_LAUNCH = PyLaunch()
+    MY_LAUNCH.display('GO HOOS', color='RANDOM')    
+    MY_LAUNCH.set_letter_delay(0.1)
     MY_LAUNCH.show_all_chars()
     MY_LAUNCH.close_launchpad()
     exit()
