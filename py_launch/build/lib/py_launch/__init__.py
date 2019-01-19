@@ -1,1 +1,1 @@
-from py_launch import PyLaunch
+from py_launch.launchpad import PyLaunch
