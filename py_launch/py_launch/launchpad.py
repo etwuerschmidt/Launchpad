@@ -1,3 +1,4 @@
+import random
 import time
 import mido
 
@@ -77,10 +78,38 @@ class PyLaunch():
 				84,
 				100,
 				114, 115, 116, 117, 118],
-		'J': [],
-		'K': [],
-		'L': [],
-		'M': [],
+		'J': [4, 5, 6,
+				21,
+				37,
+				53,
+				69,
+				85,
+				98, 101,
+				115, 116],
+		'K': [2, 6,
+				18, 21,
+				34, 36,
+				50, 51,
+				66, 67,
+				82, 84,
+				98, 101,
+				114, 118],
+		'L': [2,
+				18,
+				34,
+				50,
+				66,
+				82,
+				98,
+				114, 115, 116, 117, 118],
+		'M': [2, 6,
+				18, 19, 21, 22,
+				34, 36, 38,
+				50, 52, 54,
+				66, 70,
+				82, 86,
+				98, 102, 
+				114, 118],
 		'N': [2, 6,
 				18, 22,
 				34, 35, 38,
@@ -89,10 +118,38 @@ class PyLaunch():
 				82, 86,
 				98, 102,
 				114, 118],
-		'O': [],
-		'P': [],
-		'Q': [],
-		'R': [],
+		'O': [3, 4, 5,
+				18, 22,
+				34, 38,
+				50, 54,
+				66, 70,
+				82, 86,
+				98, 102,
+				115, 116, 117],
+		'P': [2, 3, 4, 5,
+				18, 22,
+				34, 38,
+				50, 51, 52, 53,
+				66,
+				82,
+				98,
+				114],
+		'Q': [3, 4, 5,
+				18, 22,
+				34, 38,
+				50, 54,
+				66, 70,
+				82, 84, 86,
+				98, 101,
+				115, 116, 118],
+		'R': [2, 3, 4, 5,
+				18, 22,
+				34, 38,
+				50, 51, 52, 53,
+				66, 67,
+				82, 84,
+				98, 101,
+				114, 118],
 		'S': [3, 4, 5, 6,
 				18,
 				34,
@@ -101,7 +158,14 @@ class PyLaunch():
 				86,
 				102,
 				114, 115, 116, 117],
-		'T': [],
+		'T': [2, 3, 4, 5, 6,
+				20,
+				36,
+				52,
+				68,
+				84,
+				100,
+				116],
 		'U': [2, 6,
 				18, 22,
 				34, 38,
@@ -110,11 +174,46 @@ class PyLaunch():
 				82, 86,
 				98, 102,
 				115, 116, 117],
-		'V': [],
-		'W': [],
-		'X': [],
-		'Y': [],
-		'Z': []	
+		'V': [2, 6,
+				18, 22,
+				34, 38,
+				50, 54,
+				67, 69,
+				83, 85,
+				99, 101,
+				116],
+		'W': [2, 6,
+				18, 22,
+				34, 38,
+				50, 54,
+				66, 68, 70,
+				82, 84, 86,
+				98, 100, 102,
+				115, 117],
+		'X': [2, 6,
+				18, 22,
+				35, 37,
+				52,
+				67, 69,
+				82, 86,
+				98, 102,
+				114, 118],
+		'Y': [2, 6,
+				18, 22,
+				35, 37,
+				52,
+				68, 
+				84,
+				100,
+				116],
+		'Z': [2, 3, 4, 5, 6,
+				22,
+				37,
+				52,
+				67,
+				82,
+				98,
+				114, 115, 116, 117, 118]	
 		}
 
 		self.alignment = {'LEFT': -2,
@@ -129,13 +228,14 @@ class PyLaunch():
 
 		self.lit_pads = []
 
-		self.letter_delay = 0.3
+		self.letter_delay = 1
 		self.word_delay = self.letter_delay / 2
 
 		self.midi_output = mido.open_output('Launchpad S 1')
 
 	def display(self, word):
 		for letter in word.upper():
+			self.current_color = self.color_map[random.choice(list(self.color_map.keys()))]
 			if letter == ' ':
 				time.sleep(self.word_delay)
 			else:
@@ -155,11 +255,15 @@ class PyLaunch():
 			self.midi_output.send(mido.Message('note_off', note=i))
 		self.lit_pads = []
 
+	def set_letter_delay(self, new_delay):
+		self.letter_delay = new_delay
+		self.word_delay = new_delay / 2
+
 	def close_launchpad(self):
 		self.midi_output.close()
 
 
 if __name__ == "__main__":
 	myLaunch = PyLaunch()
-	myLaunch.display("BIG CHUNGUS")
+	myLaunch.display("ABCDEFGHIJKLMNOPQRSTVUWXYZ")
 	myLaunch.close_launchpad()
