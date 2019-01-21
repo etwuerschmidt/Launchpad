@@ -11,7 +11,10 @@
 3. Pad Movement
 	- Generic pad movement based on input
 	- Preset pad movements (light shows)
-4. Games
+4. Command Line Interface
+	- Support word display
+	- Features / movement via flags
+5. Games
 	- Snake
 	- Tetris
 	- Pong
