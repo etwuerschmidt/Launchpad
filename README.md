@@ -1,5 +1,12 @@
 ﻿## Repo for working with mido interfacing to a Launchpad S
 
+###To install this module, run the following from the py_launch folder
+'''bash
+python setup.py install
+'''
+
+PixelArt for letters and numbers based on couljj's post [here](https://www.planetminecraft.com/blog/block-letters/)
+
 #### TODO:
 1. Display Characters
 	- Display all alphanumeric characters
