@@ -10,8 +10,8 @@ PixelArt for letters and numbers based on couljj's post [here](https://www.plane
 #### TODO:
 ~~1. Display Characters
 	- Display all alphanumeric characters
-	- Display special characters (!#$)
-	- Display symbols e.g. <3 :) *~~
+	- Display special characters (!?$)
+	- Display symbols e.g. <3 :) ~~
 2. Letter Features
 	~~- Loop displays (repeat input)~~
 	- Cycle displays (shift input across Launchpad)
