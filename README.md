@@ -8,12 +8,12 @@ python setup.py install
 PixelArt for letters and numbers based on couljj's post [here](https://www.planetminecraft.com/blog/block-letters/)
 
 #### TODO:
-~~1. Display Characters
-	- Display all alphanumeric characters
-	- Display special characters (!?$)
-	- Display symbols e.g. <3 :) ~~
+1. ~~Display Characters~~
+	- ~~Display all alphanumeric characters~~
+	- ~~Display special characters (!?$)~~
+	- ~~Display symbols e.g. <3 :)~~
 2. Letter Features
-	~~- Loop displays (repeat input)~~
+	- ~~Loop displays (repeat input)~~
 	- Cycle displays (shift input across Launchpad)
 3. Pad Movement
 	- Generic pad movement based on input
