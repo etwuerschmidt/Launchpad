@@ -164,7 +164,7 @@ if __name__ == "__main__":
     
     '''
     MY_LAUNCH.set_letter_delay(0.2)
-    MY_LAUNCH.display_chars('NAIDORF DID 911', color='RANDOM')  
+    MY_LAUNCH.display_chars('HELLO world', color='RANDOM')  
     '''
     MY_LAUNCH.display_symbols('no smile', color='RANDOM')  
     
