@@ -30,3 +30,5 @@ PixelArt for letters and numbers based on couljj's post [here](https://www.plane
 	- Receive messages from a website
 	- Store messages in db
 	- CLI retrieves db messages for display
+7. Test Suite
+	- Generate test harness for all methods created
