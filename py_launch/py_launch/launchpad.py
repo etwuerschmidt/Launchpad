@@ -18,8 +18,10 @@ class PyLaunch():
         self.rows = [[pad + 16*x for pad in range(8)] for x in range(0, 8)]
         self.columns = [[x + 16*pad for pad in range(8)] for x in range(0, 8)]
         self.current_alignment = 4
+        self.forbidden_range = [8+16*x + i for x in range(0, 8) for i in range(0, 8)]
 
         self.color_map = {'RED': 15,
+        'ORANGE': 47,
         'GREEN': 60,
         'AMBER': 63}
 
@@ -46,14 +48,18 @@ class PyLaunch():
                     time.sleep(self.word_delay)
                 else:
                     for pad in self.char_mapping[character]:
-                        if pad not in range(128):
+                        if pad not in range(128) or pad in self.forbidden_range:
+                            '''
                             try:
                                 raise ValueError('Note must be between 0 and 127, current value is %d' % pad)
                             except:
+                                pass
                                 MY_LAUNCH.close_launchpad()
-                                raise
-                        self.midi_output.send(mido.Message('note_on', note=pad, velocity=self.current_color))
-                        self.lit_pads.append(pad)
+                            '''
+
+                        else:
+                            self.midi_output.send(mido.Message('note_on', note=pad, velocity=self.current_color))
+                            self.lit_pads.append(pad)   
                     time.sleep(self.letter_delay)
                     self.clear_lit_pads()
                     time.sleep(self.letter_delay)
@@ -86,7 +92,7 @@ class PyLaunch():
 
     def align_to_center(self):
         """Aligns all characters back to the default 'centered' position"""
-        self.char_mapping = self.centered_chars
+        self.char_mapping = copy.deepcopy(self.centered_chars)
         self.current_alignment = 4
 
     def calculate_min_edge_distance(self, pads, column):
@@ -121,6 +127,11 @@ class PyLaunch():
                     left_edge = index if index < left_edge else left_edge
         return [left_edge, right_edge]
 
+    def shift(self, direction, amount=1):
+        for character in self.char_mapping.keys():
+            for index, pad in enumerate(self.char_mapping[character]):
+                self.char_mapping[character][index] = pad - amount if direction.upper() == 'LEFT' else pad + amount     
+
     def set_letter_delay(self, new_delay):
         """Sets the delay between letters, as well as the delay between words"""
         self.letter_delay = new_delay
@@ -147,6 +158,8 @@ class PyLaunch():
 
 if __name__ == "__main__":
     MY_LAUNCH = PyLaunch()
+    #print(MY_LAUNCH.forbidden_range)
+    #print(MY_LAUNCH.columns)
     #MY_LAUNCH.align(0)
     #print(MY_LAUNCH.get_horizontal_edges(MY_LAUNCH.char_mapping['A']))
     
@@ -162,17 +175,23 @@ if __name__ == "__main__":
         MY_LAUNCH.align(col)
         MY_LAUNCH.display_chars('A')
     
-    '''
-    MY_LAUNCH.set_letter_delay(0.2)
-    MY_LAUNCH.display_chars('HELLO world', color='RANDOM')  
+    
+    MY_LAUNCH.set_letter_delay(0.005)
+
+    for char in 'hello world':
+        MY_LAUNCH.shift('right', amount=5)
+        for i in range(0, 8):
+            MY_LAUNCH.display_chars(char)
+            MY_LAUNCH.shift('left')
+        MY_LAUNCH.align_to_center()
+
+
+  
     '''
     MY_LAUNCH.display_symbols('no smile', color='RANDOM')  
     
-    MY_LAUNCH.align(0)
-    MY_LAUNCH.display_chars('A')
-    MY_LAUNCH.align(3)
-    MY_LAUNCH.display_chars('A')
-    #MY_LAUNCH.show_all_chars()
-    '''
+    MY_LAUNCH.display_chars('M')
+    
+
     MY_LAUNCH.close_launchpad()
     exit()
