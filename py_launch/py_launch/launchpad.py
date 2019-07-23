@@ -189,7 +189,7 @@ class PyLaunch():
 
 if __name__ == "__main__":
     MY_LAUNCH = PyLaunch()
-    MY_LAUNCH.scroll("hello", direction='X', positive=False)
-    MY_LAUNCH.scroll("world", direction='Y')
+    MY_LAUNCH.scroll("testing", direction='X', positive=False)
+    MY_LAUNCH.scroll("ignore", direction='Y')
     MY_LAUNCH.close_launchpad()
     exit()
