@@ -12,15 +12,15 @@ PixelArt for letters and numbers based on couljj's post [here](https://www.plane
 	- ~~Display all alphanumeric characters~~
 	- ~~Display special characters (!?$)~~
 	- ~~Display symbols e.g. <3 :)~~
-2. Letter Features
+2. ~~Letter Features~~
 	- ~~Loop displays (repeat input)~~
-	- Cycle displays (shift input across Launchpad)
-3. Pad Movement
+	- ~~Cycle displays (shift input across Launchpad)~~
+3. Command Line Interface
+	- Support word display
+	- Features / movement via flags	
+4. Pad Movement
 	- Generic pad movement based on input
 	- Preset pad movements (light shows)
-4. Command Line Interface
-	- Support word display
-	- Features / movement via flags
 5. Games
 	- Snake
 	- Tetris
