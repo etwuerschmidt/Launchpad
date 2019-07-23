@@ -9,19 +9,19 @@ class PyLaunch():
 
     def __init__(self):
         
-        self.char_mapping = PadData().char_mapping
+        local_pads = PadData()
 
+        self.char_mapping = local_pads.char_mapping
         self.centered_chars = copy.deepcopy(self.char_mapping)
-
-        self.symbol_mapping = PadData().symbol_mapping
-
-        
+        self.symbol_mapping = local_pads.symbol_mapping        
 
         self.rows = [[pad + 16*x for pad in range(8)] for x in range(0, 8)]
         self.columns = [[x + 16*pad for pad in range(8)] for x in range(0, 8)]
         self.current_alignment = 4
+        self.forbidden_range = [8+16*x + i for x in range(0, 8) for i in range(0, 8)]
 
         self.color_map = {'RED': 15,
+        'ORANGE': 47,
         'GREEN': 60,
         'AMBER': 63}
 
@@ -48,14 +48,18 @@ class PyLaunch():
                     time.sleep(self.word_delay)
                 else:
                     for pad in self.char_mapping[character]:
-                        if pad not in range(128):
+                        if pad not in range(128) or pad in self.forbidden_range:
+                            '''
                             try:
                                 raise ValueError('Note must be between 0 and 127, current value is %d' % pad)
                             except:
+                                pass
                                 MY_LAUNCH.close_launchpad()
-                                raise
-                        self.midi_output.send(mido.Message('note_on', note=pad, velocity=self.current_color))
-                        self.lit_pads.append(pad)
+                            '''
+
+                        else:
+                            self.midi_output.send(mido.Message('note_on', note=pad, velocity=self.current_color))
+                            self.lit_pads.append(pad)   
                     time.sleep(self.letter_delay)
                     self.clear_lit_pads()
                     time.sleep(self.letter_delay)
@@ -77,19 +81,13 @@ class PyLaunch():
                 time.sleep(self.symbol_delay)
             repeat = repeat - 1
 
-    def align(self, column_alignment):
+    def align_horizontal(self, column_alignment):
         """Aligns left edge of all characters to specified column, as long as full character can fit within the launchpad space"""
         for character in self.char_mapping.keys():
             shift_value = self.calculate_min_edge_distance(self.char_mapping[character], column_alignment)
-            print("Char %s, shift %d" % (character, shift_value))
             for index, pad in enumerate(self.char_mapping[character]):
                 self.char_mapping[character][index] = pad + shift_value if column_alignment >= self.current_alignment else pad - shift_value
         self.current_alignment = column_alignment
-
-    def align_to_center(self):
-        """Aligns all characters back to the default 'centered' position"""
-        self.char_mapping = self.centered_chars
-        self.current_alignment = 4
 
     def calculate_min_edge_distance(self, pads, column):
         """Returns the minimum distance from a character to a specified column"""
@@ -112,6 +110,11 @@ class PyLaunch():
             self.midi_output.send(mido.Message('note_off', note=i))
             self.lit_pads = []
 
+    def close_launchpad(self):
+        """Closes MIDI port"""
+        self.clear_all_pads()
+        self.midi_output.close()
+
     def get_horizontal_edges(self, pads):
         """Returns the left and right edges of a character"""
         right_edge = 0
@@ -122,6 +125,49 @@ class PyLaunch():
                     right_edge = index if index > right_edge else right_edge
                     left_edge = index if index < left_edge else left_edge
         return [left_edge, right_edge]
+
+    def push_horizontal(self, times=1, positive=True):
+        """Moves pads along the x-axis"""
+        for character in self.char_mapping.keys():
+            for index, pad in enumerate(self.char_mapping[character]):
+                self.char_mapping[character][index] = pad + times if positive else pad - times
+
+    def push_vertical(self, times=1, positive=True):
+        """Moves pads along the y-axis"""
+        for character in self.char_mapping.keys():
+            for index, pad in enumerate(self.char_mapping[character]):
+                self.char_mapping[character][index] = pad - 16*times if positive else pad + 16*times
+
+    def reset_pads(self):
+        """Aligns all characters back to the default 'centered' position"""
+        self.char_mapping = copy.deepcopy(self.centered_chars)
+        self.current_alignment = 4
+
+    def scroll(self, word, direction, positive=True):
+        """Scrolls a word in the given axis direction across the launchpad"""
+        #TODO: Clean up this method
+        MY_LAUNCH.reset_pads()
+        MY_LAUNCH.set_letter_delay(0.001)
+        movement_range = []
+        if direction == 'X':
+            MY_LAUNCH.push_horizontal(times=5, positive=not positive)
+            movement_range = range(0, 13)
+            for char in word:
+                for row in movement_range:
+                    MY_LAUNCH.display_chars(char)
+                    MY_LAUNCH.push_horizontal(positive=positive)
+                MY_LAUNCH.reset_pads()
+                MY_LAUNCH.push_horizontal(times=5, positive=not positive)
+        else:
+            MY_LAUNCH.push_vertical(times=8, positive=not positive)
+            movement_range = range(0, 16)
+            for char in word:
+                for row in movement_range:
+                    MY_LAUNCH.display_chars(char)
+                    MY_LAUNCH.push_vertical(positive=positive)
+                MY_LAUNCH.reset_pads()
+                MY_LAUNCH.push_vertical(times=8, positive=not positive)
+        self.reset_pads()
 
     def set_letter_delay(self, new_delay):
         """Sets the delay between letters, as well as the delay between words"""
@@ -141,40 +187,9 @@ class PyLaunch():
         for char in self.char_mapping.keys():
             self.display_chars(char, color=color, repeat=repeat)
 
-    def close_launchpad(self):
-        """Closes MIDI port"""
-        self.clear_all_pads()
-        self.midi_output.close()
-
-
 if __name__ == "__main__":
     MY_LAUNCH = PyLaunch()
-    #MY_LAUNCH.align(0)
-    #print(MY_LAUNCH.get_horizontal_edges(MY_LAUNCH.char_mapping['A']))
-    
-    '''
-    MY_LAUNCH.set_letter_delay(0.001)
-    for char in 'SMASH THAT F':
-        for col in [4, 3, 2, 1, 0]:
-            MY_LAUNCH.align(col)
-            MY_LAUNCH.display_chars(char)
-    
-    
-    for col in [4, 3, 2, 1, 0]:
-        MY_LAUNCH.align(col)
-        MY_LAUNCH.display_chars('A')
-    
-    '''
-    MY_LAUNCH.set_letter_delay(0.2)
-    MY_LAUNCH.display_chars('NAIDORF DID 911', color='RANDOM')  
-    '''
-    MY_LAUNCH.display_symbols('no smile', color='RANDOM')  
-    
-    MY_LAUNCH.align(0)
-    MY_LAUNCH.display_chars('A')
-    MY_LAUNCH.align(3)
-    MY_LAUNCH.display_chars('A')
-    #MY_LAUNCH.show_all_chars()
-    '''
+    MY_LAUNCH.scroll("hello", direction='X', positive=False)
+    MY_LAUNCH.scroll("world", direction='Y')
     MY_LAUNCH.close_launchpad()
     exit()
