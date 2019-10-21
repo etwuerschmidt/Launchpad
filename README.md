@@ -1,6 +1,6 @@
-﻿## Repo for working with mido interfacing to a Launchpad S
+﻿### Implementing Character / Pad Movement
 
-### To install this module, run the following from the py_launch folder
+#### To install this module, run the following from inside the py_launch directory
 ```bash
 python setup.py install
 ```

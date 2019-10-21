@@ -1,13 +1,8 @@
-import random
-import time
-import mido
-
-
-class PyLaunch():
+class PadData():
 
     def __init__(self):
         self.char_mapping = {'A': [3, 4, 5, 
-        18, 22, 
+        18, 22,
         34, 38, 
         50, 54,
         66, 67, 68, 69, 70,
@@ -58,8 +53,8 @@ class PyLaunch():
         18, 22,
         34, 
         50, 
-        66,
-        82, 85, 86,
+        66, 69, 70,
+        82, 86,
         98, 102,
         115, 116, 117],
         'H': [2, 6,
@@ -105,7 +100,7 @@ class PyLaunch():
         'M': [2, 6,
         18, 19, 21, 22,
         34, 36, 38,
-        50, 52, 54,
+        50, 54,
         66, 70,
         82, 86,
         98, 102, 
@@ -178,8 +173,8 @@ class PyLaunch():
         18, 22,
         34, 38,
         50, 54,
-        67, 69,
-        83, 85,
+        66, 70,
+        82, 86,
         99, 101,
         116],
         'W': [2, 6,
@@ -382,89 +377,3 @@ class PyLaunch():
         82, 84, 86,
         99, 100, 101]
         }
-
-        self.alignment = {'LEFT': -2,
-        'CENTER': 0,
-        'RIGHT': 1}
-
-        self.color_map = {'RED': 15,
-        'GREEN': 60,
-        'AMBER': 63}
-
-        self.current_color = self.color_map['GREEN']
-
-        self.lit_pads = []
-
-        self.symbol_delay = 1
-        self.letter_delay = 0.5
-        self.word_delay = self.letter_delay / 2
-
-        self.midi_output = mido.open_output('Launchpad S 1')
-        self.midi_output.send(mido.Message('note_on', note=120, velocity=28))
-
-    def display_chars(self, words, color=None):
-        if color != 'RANDOM':
-            self.set_pad_color(color)
-        for letter in words.upper():
-            if color == 'RANDOM':
-                self.set_pad_color(color)
-            if letter == ' ':
-                time.sleep(self.word_delay)
-            else:
-                for pad in self.char_mapping[letter]:
-                    self.midi_output.send(mido.Message('note_on', note=pad, velocity=self.current_color))
-                    self.lit_pads.append(pad)
-                time.sleep(self.letter_delay)
-                self.clear_lit_pads()
-                time.sleep(self.letter_delay)
-
-    def display_symbols(self, symbols, color=None):
-        if color != 'RANDOM':
-            self.set_pad_color(color)
-        for symbol in symbols.upper().split():
-            if color == 'RANDOM':
-                self.set_pad_color(color)
-            for pad in self.symbol_mapping[symbol]:
-                self.midi_output.send(mido.Message('note_on', note=pad, velocity=self.current_color))
-                self.lit_pads.append(pad)
-            time.sleep(self.symbol_delay)
-            self.clear_lit_pads()
-            time.sleep(self.symbol_delay)
-
-    def clear_all_pads(self):
-        for i in range(0, 121):
-            self.midi_output.send(mido.Message('note_off', note=i))
-
-    def clear_lit_pads(self):
-        for i in self.lit_pads:
-            self.midi_output.send(mido.Message('note_off', note=i))
-            self.lit_pads = []
-
-    def set_letter_delay(self, new_delay):
-        self.letter_delay = new_delay
-        self.word_delay = new_delay / 2
-
-    def set_pad_color(self, color):
-        if color is not None:
-            if color.upper() == 'RANDOM':
-                self.current_color = self.color_map[random.choice(list(self.color_map.keys()))]
-            else:
-                self.current_color = self.color_map[color]
-
-    def show_all_chars(self):
-        for char in self.char_mapping.keys():
-            self.display_chars(char)
-
-    def close_launchpad(self):
-        self.clear_all_pads()
-        self.midi_output.close()
-
-
-if __name__ == "__main__":
-    MY_LAUNCH = PyLaunch()
-    #MY_LAUNCH.display_chars('?!$', color='RANDOM')  
-    MY_LAUNCH.display_symbols('no smile', color='RANDOM')  
-    #MY_LAUNCH.set_letter_delay(1)
-    #MY_LAUNCH.show_all_chars()
-    MY_LAUNCH.close_launchpad()
-    exit()
