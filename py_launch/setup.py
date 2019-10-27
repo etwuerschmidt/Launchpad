@@ -7,7 +7,7 @@ setup(
 	author_email='ericwuerschmidt@gmail.com',
 	packages=['py_launch'],
 	install_requires=['mido','python-rtmidi'],
-	version='0.1',
+	version='0.2',
 	license='',
 	description='OO Novation Launchpad Implementation',
 	long_description='',

@@ -2,7 +2,7 @@ import copy
 import random
 import time
 import mido
-from pads import PadData
+from py_launch.pads import PadData
 
 
 class PyLaunch():
@@ -146,27 +146,27 @@ class PyLaunch():
     def scroll(self, word, direction, positive=True):
         """Scrolls a word in the given axis direction across the launchpad"""
         #TODO: Clean up this method
-        MY_LAUNCH.reset_pads()
-        MY_LAUNCH.set_letter_delay(0.001)
+        self.reset_pads()
+        self.set_letter_delay(0.001)
         movement_range = []
         if direction == 'X':
-            MY_LAUNCH.push_horizontal(times=5, positive=not positive)
+            self.push_horizontal(times=5, positive=not positive)
             movement_range = range(0, 13)
             for char in word:
                 for row in movement_range:
-                    MY_LAUNCH.display_chars(char)
-                    MY_LAUNCH.push_horizontal(positive=positive)
-                MY_LAUNCH.reset_pads()
-                MY_LAUNCH.push_horizontal(times=5, positive=not positive)
+                    self.display_chars(char)
+                    self.push_horizontal(positive=positive)
+                self.reset_pads()
+                self.push_horizontal(times=5, positive=not positive)
         else:
-            MY_LAUNCH.push_vertical(times=8, positive=not positive)
+            self.push_vertical(times=8, positive=not positive)
             movement_range = range(0, 16)
             for char in word:
                 for row in movement_range:
-                    MY_LAUNCH.display_chars(char)
-                    MY_LAUNCH.push_vertical(positive=positive)
-                MY_LAUNCH.reset_pads()
-                MY_LAUNCH.push_vertical(times=8, positive=not positive)
+                    self.display_chars(char)
+                    self.push_vertical(positive=positive)
+                self.reset_pads()
+                self.push_vertical(times=8, positive=not positive)
         self.reset_pads()
 
     def set_letter_delay(self, new_delay):
