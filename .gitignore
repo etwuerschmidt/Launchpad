@@ -1,5 +1,9 @@
-#Ignore files created when performing module setup locally
+# Ignore files created when performing module setup locally
 /py_launch/build
 /py_launch/dist
 /py_launch/py_launch.egg-info
 /py_launch/py_launch/__pycache__
+
+# Ignore directories
+**/venv
+**/.vscode

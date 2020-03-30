@@ -29,7 +29,6 @@ class PyLaunch():
 
         self.lit_pads = []
 
-        self.symbol_delay = 1
         self.letter_delay = 0.5
         self.word_delay = self.letter_delay / 2
 
@@ -76,9 +75,9 @@ class PyLaunch():
                 for pad in self.symbol_mapping[symbol]:
                     self.midi_output.send(mido.Message('note_on', note=pad, velocity=self.current_color))
                     self.lit_pads.append(pad)
-                time.sleep(self.symbol_delay)
+                time.sleep(self.letter_delay)
                 self.clear_lit_pads()
-                time.sleep(self.symbol_delay)
+                time.sleep(self.letter_delay)
             repeat = repeat - 1
 
     def align_horizontal(self, column_alignment):
@@ -147,7 +146,7 @@ class PyLaunch():
         """Scrolls a word in the given axis direction across the launchpad"""
         #TODO: Clean up this method
         self.reset_pads()
-        self.set_letter_delay(0.001)
+        self.set_letter_delay(0.01)
         movement_range = []
         if direction == 'X':
             self.push_horizontal(times=5, positive=not positive)
@@ -168,6 +167,7 @@ class PyLaunch():
                 self.reset_pads()
                 self.push_vertical(times=8, positive=not positive)
         self.reset_pads()
+        self.set_letter_delay(0.5)
 
     def set_letter_delay(self, new_delay):
         """Sets the delay between letters, as well as the delay between words"""
@@ -189,7 +189,15 @@ class PyLaunch():
 
 if __name__ == "__main__":
     MY_LAUNCH = PyLaunch()
-    MY_LAUNCH.scroll("hello", direction='X', positive=False)
-    MY_LAUNCH.scroll("world", direction='Y')
-    MY_LAUNCH.close_launchpad()
-    exit()
+    while True:
+        try:
+            MY_LAUNCH.set_pad_color('RANDOM')
+            MY_LAUNCH.display_chars("I")
+            time.sleep(1)
+            MY_LAUNCH.display_symbols("HEART")
+            time.sleep(1)
+            MY_LAUNCH.display_chars("SEATTLE")
+            time.sleep(1)
+        except:
+            MY_LAUNCH.close_launchpad()
+            exit()
